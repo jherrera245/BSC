@@ -5,12 +5,16 @@ import Conexion.ConectarDB;
 import Interfaces.ComboBoxBus;
 import Interfaces.Query;
 import Model.Castigo;
+import Render.TableRender;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -38,7 +42,7 @@ public class CastigoQuery extends ConectarDB implements Query, ComboBoxBus {
         try {
             ps = conectar.prepareStatement(sql);
             ps.setInt(1, castigo.getIdBusCastigo());
-            ps.setString(2, castigo.getEstadoCastigo());
+            ps.setString(2, castigo.getFechaInicioCastigo());
             ps.setString(3, castigo.getFechaFinCastigo());
             ps.setString(4, castigo.getEstadoCastigo());
             ps.execute(); //Ejecutar consulta.
@@ -69,12 +73,12 @@ public class CastigoQuery extends ConectarDB implements Query, ComboBoxBus {
         Connection conectar = Conectar(); //Estableciendo conexion a DB.
 
         //Consulta sql.
-        String sql = "UPDATE castigo SET IdBusCastigo =  ?, FechaInicioCastigo = ?, FechaFinCastigo = ?, EstadoCastigo = ?";
+        String sql = "UPDATE castigo SET IdBusCastigo =  ?, FechaInicioCastigo = ?, FechaFinCastigo = ?, EstadoCastigo = ? WHERE IdCastigo = ?";
 
         try {
             ps = conectar.prepareStatement(sql);
             ps.setInt(1, castigo.getIdBusCastigo());
-            ps.setString(2, castigo.getEstadoCastigo());
+            ps.setString(2, castigo.getFechaInicioCastigo());
             ps.setString(3, castigo.getFechaFinCastigo());
             ps.setString(4, castigo.getEstadoCastigo());
             ps.setInt(5, castigo.getIdCastigo());
@@ -173,32 +177,61 @@ public class CastigoQuery extends ConectarDB implements Query, ComboBoxBus {
         ResultSet rs = null; //Objeto para recepcion de datos
         Connection conectar = Conectar(); //Estableciendo conexion a DB.
 
-        DefaultTableModel modelTabla = new DefaultTableModel(); //Modelo de tabla
+        table.setDefaultRenderer(Object.class, new TableRender());
+        //Crear Botones
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setName("modificar");
+
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setName("eliminar");
+
+        ArrayList<JLabel> Filas = new ArrayList(); //Crear un array list de tipo JLabel
+        int numeroFila = 0;
+
+        DefaultTableModel modelTabla; //Modelo de tabla
         try {
 
-            String sql = "SELECT jefe.NombreJefe, jefe.ApellidoJefe, ruta.NumeroRuta, destino.NombreDestino, castigo.FechaInicioCastigo, castigo.FechaFinCastigo, castigo.EstadoCastigo FROM castigo INNER JOIN bus ON bus.IdBus = castigo.IdBusCastigo INNER JOIN jefe ON jefe.IdJefe = bus.IdBus INNER JOIN ruta ON ruta.IdRuta = bus.IdRutaBus INNER JOIN destino ON destino.IdRutaDestino = ruta.IdRuta";
-            String[] registros = new String[sql.length()];
-            String[] titulosColumna = {"Nombre", "Ruta", "Destinos", "Fecha Inicio", "Fecha Fin", "Estado"};
+            String sql = "SELECT castigo.IdCastigo, jefe.NombreJefe, jefe.ApellidoJefe, ruta.NumeroRuta, destino.NombreDestino, DATE_FORMAT(castigo.FechaInicioCastigo, '%d/%m/%Y') AS FechaInicio, DATE_FORMAT(castigo.FechaFinCastigo, '%d/%m/%Y') AS FechaFinal, castigo.EstadoCastigo FROM castigo INNER JOIN bus ON bus.IdBus = castigo.IdBusCastigo LEFT JOIN jefe ON jefe.IdJefe = bus.IdJefeBus INNER JOIN ruta ON ruta.IdRuta = bus.IdRutaBus INNER JOIN destino ON destino.IdRutaDestino = ruta.IdRuta ORDER BY FechaFinal ASC";
 
-            //Añadiendo encabezado para tabla
-            modelTabla = new DefaultTableModel(null, titulosColumna);
+            Object[] registros = new Object[9];
+            String[] titulosColumna = {"N#", "Nombre", "Ruta", "Destinos", "Fecha Inicio", "Fecha Fin", "Estado", "Modificar", "Eliminar"};
+
+            //Añadiendo encabezado para tabla y anulando la edicion de las celdas
+            modelTabla = new DefaultTableModel(null, titulosColumna) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
             ps = conectar.prepareStatement(sql);
             rs = ps.executeQuery();  //Ejecutar consulta.
 
             while (rs.next()) {
-                registros[0] = rs.getString("NombreJefe") + " " + rs.getString("ApellidoJefe");
-                registros[1] = rs.getString("NumeroRuta");
-                registros[2] = rs.getString("NombreDestino");
-                registros[3] = rs.getString("FechaInicio");
-                registros[4] = rs.getString("FechaFin");
-                registros[5] = rs.getString("EstadoCastigo");
+
+                Filas.add(numeroFila, new JLabel());
+                Filas.get(numeroFila).setText(String.valueOf(numeroFila + 1));
+                Filas.get(numeroFila).setName(rs.getString("IdCastigo"));
+
+                registros[0] = Filas.get(numeroFila);
+                registros[1] = rs.getString("NombreJefe") + " " + rs.getString("ApellidoJefe");
+                registros[2] = rs.getString("NumeroRuta");
+                registros[3] = rs.getString("NombreDestino");
+                registros[4] = rs.getString("FechaInicio");
+                registros[5] = rs.getString("FechaFinal");
+                registros[6] = rs.getString("EstadoCastigo");
+                registros[7] = btnModificar;
+                registros[8] = btnEliminar;
                 modelTabla.addRow(registros);//añadir un fila a la tabla
+
+                numeroFila++;
             }
 
             table.setModel(modelTabla);
-            table.getColumnModel().getColumn(0).setPreferredWidth(200);
-            table.getColumnModel().getColumn(4).setPreferredWidth(200);
-
+            table.getColumnModel().getColumn(1).setPreferredWidth(200);
+            table.getColumnModel().getColumn(6).setPreferredWidth(80);
+            table.getColumnModel().getColumn(7).setPreferredWidth(80);
+            table.setRowHeight(30);
         } catch (SQLException sqle) { //Capturando errores en la consulta
             System.err.println(sqle);
         } finally {
@@ -211,7 +244,7 @@ public class CastigoQuery extends ConectarDB implements Query, ComboBoxBus {
     }
 
     @Override
-    public void LlenarComboxBus(JComboBox box) {
+    public void LlenarComboBoxBus(JComboBox box) {
         DefaultComboBoxModel model;  //Modelo de ComboBox.
         PreparedStatement ps = null; //Definir objeto para la consulta
         ResultSet rs = null; //Objeto para recepcion de datos

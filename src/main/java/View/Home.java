@@ -27,7 +27,7 @@ public class Home extends javax.swing.JFrame {
         CobradorQuery cobradorQuery = new CobradorQuery();
         MotoristaQuery motoristaQuery = new MotoristaQuery();
         
-        busQuery.View(tabla);
+        jefeQuery.View(tabla);
         
         busQuery.LlenarComboBoxJefe(cbxJefe);
         busQuery.LlenarComboBoxMotorista(cbxMotorista);

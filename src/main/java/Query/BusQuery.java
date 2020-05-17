@@ -7,12 +7,16 @@ import Interfaces.ComboBoxJefe;
 import Interfaces.ComboBoxMotorista;
 import Interfaces.Query;
 import Model.Bus;
+import Render.TableRender;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,7 +43,7 @@ public class BusQuery extends ConectarDB implements Query, ComboBoxCobrador, Com
         String sql = "INSERT INTO bus (IdBus, IdRutaBus, IdMotoristaBus, IdCobradorBus, IdJefeBus, PlacaBus, MarcaBus, ModeloBus, SerieBus) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            ps =  conectar.prepareStatement(sql);
+            ps = conectar.prepareStatement(sql);
             ps.setInt(1, bus.getIdRutaBus());
             ps.setInt(2, bus.getIdMotoristaBus());
             ps.setInt(3, bus.getIdCobradorBus());
@@ -79,7 +83,7 @@ public class BusQuery extends ConectarDB implements Query, ComboBoxCobrador, Com
         String sql = "UPDATE bus SET IdRutaBus = ?, IdMotoristaBus = ?, IdCobradorBus = ?, IdJefeBus = ?, PlacaBus = ?, MarcaBus = ?, ModeloBus = ?, SerieBus = ? WHERE IdBus = ?";
 
         try {
-            ps =  conectar.prepareStatement(sql);
+            ps = conectar.prepareStatement(sql);
             ps.setInt(1, bus.getIdRutaBus());
             ps.setInt(2, bus.getIdMotoristaBus());
             ps.setInt(3, bus.getIdCobradorBus());
@@ -194,36 +198,62 @@ public class BusQuery extends ConectarDB implements Query, ComboBoxCobrador, Com
         ResultSet rs = null; //Objeto para recepcion de datos
         Connection conectar = Conectar(); //Estableciendo conexion a DB.
 
+        table.setDefaultRenderer(Object.class, new TableRender());
+        //Crear Botones
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setName("modificar");
+
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setName("eliminar");
+
+        ArrayList<JLabel> Filas = new ArrayList(); //Crear un array list de tipo JLabel
+        int numeroFila = 0;
+
         DefaultTableModel modelTabla; //Modelo de tabla
-        modelTabla = new DefaultTableModel();
+
         try {
 
-            String sql = "SELECT CONCAT(jefe.NombreJefe,' ',jefe.ApellidoJefe) AS NombreJefe, CONCAT(motorista.NombreMotorista, ' ', motorista.ApellidoMotorista) AS NombreMotorista, CONCAT(cobrador.NombreCobrador, ' ', cobrador.ApellidoCobrador) AS NombreCobrador, ruta.NumeroRuta, destino.NombreDestino, bus.PlacaBus, bus.SerieBus, bus.MarcaBus, bus.ModeloBus FROM bus INNER JOIN jefe ON jefe.IdJefe = bus.IdJefeBus INNER JOIN motorista ON motorista.IdMotorista = bus.IdMotoristaBus INNER JOIN cobrador ON cobrador.IdCobrador = bus.IdCobradorBus INNER JOIN ruta ON ruta.IdRuta= bus.IdRutaBus INNER JOIN destino ON destino.IdRutaDestino = ruta.IdRuta";
-            String[] registros = new String[sql.length()];
-            String[] titulosColumna = {"Propietario", "Motorista", "Cobrador", "Ruta", "Destino", "N° Placa", "Serie", "Marca", "Modelo"};
+            String sql = "SELECT IdBus, CONCAT(jefe.NombreJefe,' ',jefe.ApellidoJefe) AS NombreJefe, CONCAT(motorista.NombreMotorista, ' ', motorista.ApellidoMotorista) AS NombreMotorista, CONCAT(cobrador.NombreCobrador, ' ', cobrador.ApellidoCobrador) AS NombreCobrador, ruta.NumeroRuta, destino.NombreDestino, bus.PlacaBus, bus.SerieBus, bus.MarcaBus, bus.ModeloBus FROM bus INNER JOIN jefe ON jefe.IdJefe = bus.IdJefeBus INNER JOIN motorista ON motorista.IdMotorista = bus.IdMotoristaBus INNER JOIN cobrador ON cobrador.IdCobrador = bus.IdCobradorBus INNER JOIN ruta ON ruta.IdRuta= bus.IdRutaBus INNER JOIN destino ON destino.IdRutaDestino = ruta.IdRuta";
+            Object[] registros = new Object[12];
+            String[] titulosColumna = {"N#", "Propietario", "Motorista", "Cobrador", "Ruta", "Destino", "N° Placa", "Serie", "Marca", "Modelo", "Modificar", "Eliminar"};
 
-            //Añadiendo encabezado para tabla
-            modelTabla = new DefaultTableModel(null, titulosColumna);
+            //Añadiendo encabezado para tabla y anulando la edicion de las celdas
+            modelTabla = new DefaultTableModel(null, titulosColumna) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            
             ps = conectar.prepareStatement(sql);
             rs = ps.executeQuery();  //Ejecutar consulta.
 
             while (rs.next()) {
-                registros[0] = rs.getString("NombreJefe");
-                registros[1] = rs.getString("NombreMotorista");
-                registros[2] = rs.getString("NombreCobrador");
-                registros[3] = rs.getString("NumeroRuta");
-                registros[4] = rs.getString("NombreDestino");
-                registros[5] = rs.getString("PlacaBus");
-                registros[6] = rs.getString("SerieBus");
-                registros[7] = rs.getString("MarcaBus");
-                registros[8] = rs.getString("ModeloBus");
+                Filas.add(numeroFila, new JLabel());
+                Filas.get(numeroFila).setText(String.valueOf(numeroFila + 1));
+                Filas.get(numeroFila).setName(rs.getString("IdBus"));
+
+                registros[0] = Filas.get(numeroFila);
+                registros[1] = rs.getString("NombreJefe");
+                registros[2] = rs.getString("NombreMotorista");
+                registros[3] = rs.getString("NombreCobrador");
+                registros[4] = rs.getString("NumeroRuta");
+                registros[5] = rs.getString("NombreDestino");
+                registros[6] = rs.getString("PlacaBus");
+                registros[7] = rs.getString("SerieBus");
+                registros[8] = rs.getString("MarcaBus");
+                registros[9] = rs.getString("ModeloBus");
+                registros[10] = btnModificar;
+                registros[11] = btnEliminar;
                 modelTabla.addRow(registros);//añadir un fila a la tabla
+
+                numeroFila++;
             }
 
             table.setModel(modelTabla);
-            table.getColumnModel().getColumn(0).setPreferredWidth(300);
             table.getColumnModel().getColumn(1).setPreferredWidth(300);
             table.getColumnModel().getColumn(2).setPreferredWidth(300);
+            table.getColumnModel().getColumn(3).setPreferredWidth(300);
 
         } catch (SQLException sqle) { //Capturando errores en la consulta
             System.err.println(sqle);
@@ -250,7 +280,7 @@ public class BusQuery extends ConectarDB implements Query, ComboBoxCobrador, Com
         String sql = "SELECT cobrador.IdCobrador, cobrador.NombreCobrador, cobrador.ApellidoCobrador FROM cobrador";
 
         try {
-            ps =  conectar.prepareStatement(sql);
+            ps = conectar.prepareStatement(sql);
             rs = ps.executeQuery();  //Ejecutar consulta.
             model = new DefaultComboBoxModel();
             box.setModel(model);
@@ -284,7 +314,7 @@ public class BusQuery extends ConectarDB implements Query, ComboBoxCobrador, Com
         String sql = "SELECT jefe.IdJefe, jefe.NombreJefe, jefe.ApellidoJefe FROM jefe";
 
         try {
-            ps =  conectar.prepareStatement(sql);
+            ps = conectar.prepareStatement(sql);
             rs = ps.executeQuery();  //Ejecutar consulta.
             model = new DefaultComboBoxModel();
             box.setModel(model);

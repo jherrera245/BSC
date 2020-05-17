@@ -4,10 +4,14 @@ import Interfaces.Query;
 import Conexion.ConectarDB;
 import javax.swing.JTable;
 import Model.Empleado;
+import Render.TableRender;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -182,32 +186,58 @@ public class CobradorQuery extends ConectarDB implements Query {
         ResultSet rs = null; //Objeto para recepcion de datos
         Connection conectar = Conectar(); //Estableciendo conexion a DB.
 
-        DefaultTableModel modelTabla = new DefaultTableModel(); //Modelo de tabla
+        table.setDefaultRenderer(Object.class, new TableRender());
+        //Crear Botones
+        JButton btnModificar = new JButton("Modificar");
+        btnModificar.setName("modificar");
+
+        JButton btnEliminar = new JButton("Eliminar");
+        btnEliminar.setName("eliminar");
+
+        ArrayList<JLabel> Filas = new ArrayList(); //Crear un array list de tipo JLabel
+        int numeroFila = 0;
+
+        DefaultTableModel modelTabla; //Modelo de tabla
+
         try {
 
             String sql = "SELECT * FROM cobrador";
-            String[] registros = new String[sql.length()];
-            String[] titulosColumna = {"Nombre", "Numero DUI", "Licencia", "Telefono", "Direccion", "Genero", "Sueldo"};
+            Object[] registros = new Object[10];
+            String[] titulosColumna = {"N#", "Nombre", "Numero DUI", "Licencia", "Telefono", "Direccion", "Genero", "Sueldo", "Modificar", "Eliminar"};
 
-            //Añadiendo encabezado para tabla
-            modelTabla = new DefaultTableModel(null, titulosColumna);
+            //Añadiendo encabezado para tabla y anulando la edicion de las celdas
+            modelTabla = new DefaultTableModel(null, titulosColumna) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
             ps = conectar.prepareStatement(sql);
             rs = ps.executeQuery();  //Ejecutar consulta.
 
             while (rs.next()) {
-                registros[0] = rs.getString("NombreCobrador")+" "+rs.getString("ApellidoCobrador");
-                registros[1] = rs.getString("DuiCobrador");
-                registros[2] = rs.getString("LicenciaCobrador");
-                registros[3] = rs.getString("TelefonoCobrador");
-                registros[4] = rs.getString("DireccionCobrador");
-                registros[5] = rs.getString("GeneroCobrador");
-                registros[6] = rs.getString("SueldoCobrador");
+                Filas.add(numeroFila, new JLabel());
+                Filas.get(numeroFila).setText(String.valueOf(numeroFila + 1));
+                Filas.get(numeroFila).setName(rs.getString("IdCobrador"));
+
+                registros[0] = Filas.get(numeroFila);
+                registros[1] = rs.getString("NombreCobrador") + " " + rs.getString("ApellidoCobrador");
+                registros[2] = rs.getString("DuiCobrador");
+                registros[3] = rs.getString("LicenciaCobrador");
+                registros[4] = rs.getString("TelefonoCobrador");
+                registros[5] = rs.getString("DireccionCobrador");
+                registros[6] = rs.getString("GeneroCobrador");
+                registros[7] = rs.getString("SueldoCobrador");
+                registros[8] = btnModificar;
+                registros[9] = btnEliminar;
                 modelTabla.addRow(registros);//añadir un fila a la tabla
+
+                numeroFila++;
             }
 
             table.setModel(modelTabla);
-            table.getColumnModel().getColumn(0).setPreferredWidth(200);
-            table.getColumnModel().getColumn(4).setPreferredWidth(200);
+            table.getColumnModel().getColumn(1).setPreferredWidth(200);
+            table.getColumnModel().getColumn(5).setPreferredWidth(200);
 
         } catch (SQLException sqle) { //Capturando errores en la consulta
             System.err.println(sqle);

@@ -15,5 +15,5 @@ public interface ComboBoxBus {
     /**
      * @param box Objeto del tipo JComboBox 
      */
-    public void LlenarComboxBus(JComboBox box);
+    public void LlenarComboBoxBus(JComboBox box);
 }

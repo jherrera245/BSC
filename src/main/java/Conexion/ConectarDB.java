@@ -39,5 +39,5 @@ public class ConectarDB {
     private final String nombreBD = "bus_control";//nombre de la base de datos
     private final String urlmanager = "jdbc:mysql://localhost/" + nombreBD;//este es la url de conexion a la base de datos  mas el nombre de la bd
     private final String userBD = "jherrera";//mi usuario
-    private final String passBD = "Ds973558";//la contraseña
+    private final String passBD = "Ds973558";//la contraseña 
 }
