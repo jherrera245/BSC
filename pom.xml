@@ -5,6 +5,13 @@
     <artifactId>BSC</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    
     <repositories>
         <repository>
             <id>unknown-jars-temp-repo</id>
@@ -33,11 +40,175 @@
             <artifactId>jcalendar</artifactId>
             <version>1.4</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>AnimatonClass</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.full_6</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSNotify</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSDate</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>PlaceHolder</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.full_9.4</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.full_9.6</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.lib</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.parte1</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSAnimation</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSButtonCustom</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSButtonGradiente</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSButtonIconI</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSComponentShade</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSCustomPopuMenu</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSDragDropFiles</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSFoto_v1.0</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSMaterialComponents_2.1</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSMaterialComponents_3.0</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSPanelCircleBorder</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSPanelEffect</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSPanelGradiente</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSPanelSlider</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSProgressBar</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSScaleLabel</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSTableMetro</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RSUtilities</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>RojeruSan.full</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
     </dependencies>
     
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
 </project>
